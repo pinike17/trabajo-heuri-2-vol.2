@@ -1,7 +1,7 @@
 # algoritmo.py
 
-from .abierta import Abierta
-from .cerrada import Cerrada
+from abierta import Abierta
+from cerrada import Cerrada
 
 class AStarSolver:
     """
