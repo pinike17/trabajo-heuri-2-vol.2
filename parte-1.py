@@ -1,20 +1,11 @@
 #!/usr/bin/env python3
 
-"""
-Solves the BINAIRO puzzle (Part 1) using Constraint Satisfaction.
-
-Usage:
-    ./parte-1.py <input-file> <output-file>
-"""
-
 import sys
 from constraint import Problem, ExactSumConstraint, FunctionConstraint
+import time
 
 def read_input_board(filepath):
-    """
-    Reads the input file and returns a list of lists representing the board.
-    e.g., [['.', 'X', '.'], ['O', '.', '.']]
-    """
+    # Reads the input file and returns a list of lists representing the board.
     board = []
     try:
         with open(filepath, 'r') as f:
@@ -52,17 +43,10 @@ def read_input_board(filepath):
     return board, n
 
 def get_board_string(board_data, n):
-    """
-    Returns a string representation of the board in the required format.
-    'board_data' can be:
-    1. A list of lists (from read_input_board)
-    2. A solution dictionary (from python-constraint)
-    """
-    
+    # Returns a string representation of the board in the required format.
     # Helper to get the character for a cell
     def get_char(i, j):
         if isinstance(board_data, dict):
-            # It's a solution dict: {(0,0): 1, (0,1): 0, ...}
             val = board_data.get((i, j))
             if val == 1:
                 return 'X'
@@ -90,13 +74,10 @@ def solve_binairo(initial_board, n):
     """
     problem = Problem()
 
-    # --- 1. Define Variables ---
     # One variable for each cell (i, j)
     # Domain is {0, 1} where 0 = 'O' (white) and 1 = 'X' (black)
     variables = [(i, j) for i in range(n) for j in range(n)]
     problem.addVariables(variables, [0, 1])
-
-    # --- 2. Add Constraints ---
     
     # Constraint A: Initial State
     # Set the value for pre-filled cells
@@ -137,12 +118,12 @@ def solve_binairo(initial_board, n):
             triplet = [(j, i), (j+1, i), (j+2, i)]
             problem.addConstraint(no_three_consecutive, triplet)
 
-    # --- 3. Solve ---
+    # Solve
     solutions = problem.getSolutions()
     return solutions
 
 def main():
-    # --- 1. Handle Arguments ---
+    # Handle Arguments
     if len(sys.argv) != 3:
         print("Usage: ./parte-1.py <input-file> <output-file>", file=sys.stderr)
         sys.exit(1)
@@ -150,20 +131,25 @@ def main():
     input_filepath = sys.argv[1]
     output_filepath = sys.argv[2]
 
-    # --- 2. Read Input ---
+    # Read Input
     initial_board, n = read_input_board(input_filepath)
     initial_board_str = get_board_string(initial_board, n)
 
-    # --- 3. Solve ---
+    # Solve
+    start_time = time.time()
     solutions = solve_binairo(initial_board, n)
+    end_time = time.time()    # Stop the timer
+    execution_time = end_time - start_time
+
     num_solutions = len(solutions)
 
-    # --- 4. Screen Output ---
+    # Screen Output
     
     print(initial_board_str, end='')
     print(f"{num_solutions} solutions found")
+    # print(f"Execution time: {execution_time:.4f} seconds") # Uncomment to display execution time
 
-    # --- 5. File Output ---
+    # File Output
     
     try:
         with open(output_filepath, 'w') as f:
