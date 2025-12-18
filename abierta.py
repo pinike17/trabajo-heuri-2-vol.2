@@ -1,27 +1,20 @@
-# abierta.py (CORREGIDO)
-
 import heapq
 
 class Abierta:
-    """
-    Implementación de la Lista Abierta usando una Cola de Prioridad (Min-Heap).
-    Los elementos se almacenan como tuplas: (f_cost, node_id).
-    """
+    # Implements a priority queue for A* search algorithm.
 
     def __init__(self):
-        # Lista usada como heap binario.
+        # Heap to store the nodes based on their f(n) cost.
         self._heap = []
-        # Diccionario para verificar la existencia y el mejor costo conocido.
+        # Dictionary to track the best f(n) cost for each node.
         self._entry_finder = {} # {node_id: f_cost}
-        # Contador de prioridad (para desempate)
+        # Unique sequence count to break ties in heapq.
         self._counter = 0
 
     def push(self, f_cost, node_id):
-        """
-        Añade un nodo o actualiza su prioridad si ya existe.
-        """
+        # Add a new node or update the f(n) cost of an existing node.
         
-        # Solo se inserta si es un camino de costo MEJOR.
+        # If the node is already in the open list with a lower f(n) cost, ignore this entry.
         if node_id in self._entry_finder and f_cost >= self._entry_finder[node_id]:
             return
 
@@ -31,26 +24,20 @@ class Abierta:
         self._counter += 1
 
     def pop(self):
-        """Extrae el nodo con el menor costo f(n), ignorando entradas obsoletas."""
+        # Remove and return the node with the lowest f(n) cost.
         if not self._heap:
             raise IndexError("pop from empty heap")
 
         while self._heap:
-            # Extrae el elemento de menor costo.
+            
             f_cost, _, node_id = heapq.heappop(self._heap)
             
-            # **CORRECCIÓN CLAVE:** # 1. Verificamos si el nodo existe en el entry_finder.
-            # 2. Verificamos si el costo extraído coincide con el mejor costo conocido.
             if node_id in self._entry_finder and f_cost == self._entry_finder[node_id]:
-                 # Es la entrada válida (la de menor costo). La eliminamos y retornamos.
                 del self._entry_finder[node_id] 
                 return node_id
-            
-            # Si llegamos aquí, la entrada es obsoleta (ya que la válida fue extraída
-            # o se encontró un camino mejor), y la ignoramos (el loop continúa).
-            
-        raise IndexError("pop from empty heap") # Se lanza si el heap se vacía sin encontrar un nodo válido
+   
+        raise IndexError("pop from empty heap") # In case all entries were outdated
         
     def is_empty(self):
-        """Verifica si la lista abierta está vacía."""
+        # Check if the open list is empty.
         return not self._entry_finder

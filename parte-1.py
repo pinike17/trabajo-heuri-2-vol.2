@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import sys
 from constraint import Problem, ExactSumConstraint, FunctionConstraint
 import time
@@ -147,7 +145,7 @@ def main():
     
     print(initial_board_str, end='')
     print(f"{num_solutions} solutions found")
-    # print(f"Execution time: {execution_time:.4f} seconds") # Uncomment to display execution time
+    print(f"Execution time: {execution_time:.4f} seconds")
 
     # File Output
     
